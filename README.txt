@@ -21,7 +21,7 @@ Yang sudah tersedia:
 
 PENTING:
 Di index.html cari:
-const DISCORD_TICKET_URL = "https://discord.com/channels/ID_SERVER/ID_CHANNEL";
+const DISCORD_TICKET_URL = "https://discord.com/channels/1536301578561257554/1541828022351433748";
 
 Ganti dengan URL channel/ticket Discord kamu.
 
