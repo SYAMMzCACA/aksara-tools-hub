@@ -1,37 +1,7 @@
-AKSARA TOOLS HUB - Prototype v1
-=================================
-
-Cara menjalankan:
-1. Buka index.html di browser untuk melihat website.
-2. Untuk online, upload folder ini ke hosting static seperti Netlify, Vercel, GitHub Pages, atau Railway.
-
-Yang sudah tersedia:
-- Sidebar/menu responsif
-- Beranda
-- Bypass Audio Tools
-- Aksara Store
-- Free Assets
-- Paid Assets
-- Support
-- Setting
-- Halaman kategori asset terpisah
-- Empty state agar produk belum muncul sebelum ditambahkan
-- Tombol kembali
-- Link tiket Discord placeholder
-
-PENTING:
-Di index.html cari:
-const DISCORD_TICKET_URL = "https://discord.com/channels/1536301578561257554/1541828022351433748";
-
-Ganti dengan URL channel/ticket Discord kamu.
-
-Versi berikutnya bisa ditambahkan:
-- Admin panel untuk tambah produk
-- Database
-- Upload thumbnail
-- Upload file
-- Download counter
-- Komentar
-- Rating
-- Paid asset -> tombol tiket Discord
-- Free asset -> tombol download
+AKSARA TOOLS HUB V3
+1. Buka index.html.
+2. Cari SUPABASE_PUBLISHABLE_KEY dan ganti PASTE_YOUR_PUBLISHABLE_KEY_HERE dengan Publishable Key Supabase.
+3. Upload index.html ke GitHub, lalu Railway akan deploy.
+4. Intro menggunakan URL MP4 yang diberikan.
+JANGAN masukkan Secret Key atau Database Password ke file.
+Catatan: untuk produksi, batasi INSERT/DELETE products hanya untuk akun admin authenticated.

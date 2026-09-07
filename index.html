@@ -1,240 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AKSARA TOOLS HUB</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --bg:#08070d; --panel:#100e18; --panel2:#15121f;
-  --line:#332646; --purple:#a855f7; --pink:#ec4899;
-  --gold:#f6c453; --text:#f5f3ff; --muted:#9b93aa;
-  --shadow:0 0 28px rgba(168,85,247,.12);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:
-radial-gradient(circle at 75% 5%,rgba(168,85,247,.10),transparent 28%),
-radial-gradient(circle at 20% 90%,rgba(236,72,153,.06),transparent 25%),var(--bg);
-color:var(--text);min-height:100vh;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:
-linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
-linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:42px 42px}
-.app{display:flex;min-height:100vh}
-.sidebar{width:245px;position:fixed;inset:0 auto 0 0;background:rgba(9,8,14,.94);
-border-right:1px solid var(--line);padding:25px 17px;z-index:10}
-.brand{padding:5px 12px 25px;border-bottom:1px solid var(--line);margin-bottom:18px}
-.brand h1{font-size:26px;letter-spacing:-1.5px;font-weight:900}
-.brand h1 span{color:var(--purple)}
-.brand p{font-size:9px;color:#766d82;letter-spacing:2.5px;margin-top:4px}
-.nav{display:grid;gap:7px}
-.nav button{width:100%;border:1px solid transparent;background:transparent;color:#aaa2b5;
-padding:13px 12px;border-radius:11px;text-align:left;font-weight:750;cursor:pointer;
-display:flex;align-items:center;gap:12px;transition:.2s;font-size:13px}
-.nav button:hover,.nav button.active{background:linear-gradient(90deg,rgba(168,85,247,.18),rgba(236,72,153,.05));
-border-color:#432d58;color:#fff;box-shadow:inset 3px 0 var(--purple)}
-.nav .ico{width:25px;text-align:center;font-size:18px}
-.sidebar-note{position:absolute;bottom:25px;left:25px;right:25px;color:#635a6d;font-size:10px;line-height:1.7}
-.main{margin-left:245px;width:calc(100% - 245px);padding:22px 26px 45px}
-.topbar{height:65px;border:1px solid var(--line);background:rgba(13,11,20,.78);border-radius:17px;
-display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-shadow:var(--shadow);margin-bottom:18px}
-.page-title{font-size:19px;font-weight:900;letter-spacing:.3px}
-.page-title span{color:var(--purple)}
-.back{border:1px solid #453450;background:#12101a;color:#ddd6e8;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer}
-.hero{border:1px solid var(--line);border-radius:18px;padding:27px 28px;margin-bottom:18px;
-background:linear-gradient(135deg,rgba(168,85,247,.11),rgba(236,72,153,.035) 45%,rgba(10,9,15,.85));
-position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;width:230px;height:230px;border:1px solid rgba(246,196,83,.15);
-right:-90px;top:-100px;transform:rotate(45deg)}
-.eyebrow{font-size:11px;color:var(--gold);font-weight:900;letter-spacing:2px}
-.hero h2{font-size:34px;margin:7px 0 7px;letter-spacing:-1px}
-.hero p{color:var(--muted);font-size:13px;max-width:680px;line-height:1.6}
-.section{border:1px solid var(--line);background:rgba(12,10,17,.72);border-radius:18px;padding:22px;margin-bottom:18px}
-.section-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #282032;padding-bottom:16px;margin-bottom:18px}
-.section-head h3{font-size:20px}.section-head small{color:#756b7e}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.card{border:1px solid #2d2437;background:linear-gradient(145deg,#12101a,#0c0b11);border-radius:15px;
-padding:20px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;transition:.22s}
-.card:hover{transform:translateY(-3px);border-color:#5a3970;box-shadow:0 12px 35px rgba(0,0,0,.28)}
-.card .bigico{font-size:35px}.card h4{font-size:16px;margin-top:8px}.card p{color:#82788d;font-size:11px;line-height:1.5;margin-top:5px}
-.open{border:0;border-radius:9px;padding:10px 12px;background:linear-gradient(90deg,var(--purple),var(--pink));
-color:#fff;font-weight:900;font-size:11px;cursor:pointer;margin-top:15px}
-.open.gold{background:linear-gradient(90deg,#d89c26,var(--gold));color:#19130a}
-.empty{text-align:center;padding:55px 20px;border:1px dashed #33283e;border-radius:14px;color:#82788d}
-.empty .eico{font-size:42px;margin-bottom:10px}.empty h4{color:#ddd5e6;margin-bottom:6px}
-.search{width:210px;background:#0d0b13;border:1px solid #33283e;color:#fff;border-radius:9px;padding:10px 12px;outline:none}
-.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.product{border:1px solid #2f2539;background:#0d0c12;border-radius:14px;overflow:hidden}
-.product-img{height:145px;background:linear-gradient(135deg,#211832,#110f18);display:flex;align-items:center;justify-content:center;color:#6d5c7d;font-size:12px}
-.product-body{padding:15px}.product-body h4{font-size:15px}.product-body p{color:#81778c;font-size:11px;margin:6px 0 13px}
-.actions{display:flex;gap:8px}.actions button{flex:1}
-.comment{border:1px solid #2e2538;background:#0e0c13;padding:14px;border-radius:12px;margin-top:10px}
-.comment b{font-size:12px}.comment p{font-size:11px;color:#857a90;margin-top:4px}
-footer{text-align:center;color:#5e5667;font-size:10px;padding:12px}
-.mobile-menu{display:none}
-@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.product-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:720px){
- .sidebar{transform:translateX(-100%);transition:.25s}.sidebar.opened{transform:translateX(0)}
- .main{margin-left:0;width:100%;padding:12px}.mobile-menu{display:block;border:1px solid #3b2d48;background:#13101b;color:#fff;border-radius:9px;padding:9px 11px}
- .topbar{height:58px;padding:0 12px}.page-title{font-size:15px}.back{padding:8px 11px;font-size:11px}
- .hero{padding:21px}.hero h2{font-size:27px}.section{padding:15px}.grid,.product-grid{grid-template-columns:1fr}
- .search{width:140px}.section-head{gap:10px}.section-head h3{font-size:17px}
-}
-
-.admin-box{background:#0d0b13;border:1px solid #2d2437;border-radius:14px;padding:18px}
-.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-bottom:15px}
-.form-grid label{font-size:11px;color:#aaa0b1;font-weight:800}
-.form-grid .full{grid-column:1/-1}
-.form-grid input,.form-grid select,.form-grid textarea{display:block;width:100%;margin-top:6px;background:#09080d;border:1px solid #34293f;color:#fff;border-radius:9px;padding:11px;outline:none}
-.form-grid textarea{min-height:90px;resize:vertical}
-.product-img img{width:100%;height:100%;object-fit:cover}
-@media(max-width:720px){.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}
+*{box-sizing:border-box}body{margin:0;background:#09070f;color:#eee;font-family:system-ui,Arial,sans-serif}button,input,textarea,select{font:inherit}.hidden{display:none!important}
+#intro{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}#introVideo{width:100%;height:100%;object-fit:cover}.shade{position:absolute;inset:0;background:linear-gradient(#0002,#000b)}
+#start{position:absolute;z-index:4;padding:14px 26px;border:1px solid #c77dff;border-radius:14px;background:#140a1dcc;color:white;cursor:pointer;box-shadow:0 0 30px #9b4dff55}
+#title{position:absolute;z-index:4;text-align:center;opacity:0;transform:scale(.8);transition:1s;font-size:clamp(30px,8vw,80px);font-weight:900;letter-spacing:.08em;text-shadow:0 0 25px #c77dff}.sub{display:block;font-size:.22em;letter-spacing:.3em;margin-top:10px}
+.panel{position:absolute;top:0;bottom:0;width:50%;background:#0a0710;z-index:3;transition:transform 1s cubic-bezier(.8,0,.2,1)}.left{left:0}.right{right:0}.open .left{transform:translateX(-100%)}.open .right{transform:translateX(100%)}
+#app{min-height:100vh;display:flex}.side{width:245px;position:fixed;inset:0 auto 0 0;background:#0e0a16;border-right:1px solid #241631;padding:20px 14px;z-index:10}.brand{font-size:19px;font-weight:900;padding:10px 12px 24px}.brand span{color:#c77dff}.nav button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#aaa;padding:13px 14px;border-radius:11px;cursor:pointer;margin:4px 0}.nav button:hover,.nav button.active{background:#1d1228;color:#fff}
+.main{margin-left:245px;width:calc(100% - 245px);padding:30px;max-width:1500px}.hero{padding:28px;border:1px solid #281936;border-radius:22px;background:linear-gradient(135deg,#130b1b,#0b0910);margin-bottom:24px}.hero h1{margin:0 0 8px;font-size:clamp(28px,5vw,52px)}.muted{color:#9c91a8}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}.card{border:1px solid #2b1a39;background:#100c17;border-radius:18px;padding:20px}.icon{font-size:30px}.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;background:#7d35b8;color:#fff;font-weight:700}.alt{background:#21152b}.danger{background:#8d243c}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.thumb{height:150px;border-radius:12px;background:#1a1220;display:flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.price{color:#d49cff;font-weight:800}.empty{padding:35px;text-align:center;border:1px dashed #382446;border-radius:18px;color:#93879d}form{display:grid;gap:12px;max-width:720px}label{font-size:13px;color:#b9aec3}input,textarea,select{width:100%;padding:12px;border:1px solid #33223e;border-radius:10px;background:#0b0910;color:#fff}textarea{min-height:100px}.commentBox{margin-top:16px;border-top:1px solid #291a35;padding-top:14px}.comment{padding:10px 0;border-bottom:1px solid #201529}.comment b{color:#d8a9ff}.small{font-size:12px;color:#82768c}
+@media(max-width:760px){.side{width:72px;padding:14px 7px}.brand{font-size:0;text-align:center}.brand span{font-size:19px}.nav button{font-size:0;text-align:center}.nav button:first-letter{font-size:20px}.main{margin-left:72px;width:calc(100% - 72px);padding:18px}}
 </style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar" id="sidebar">
-  <div class="brand"><h1><span>AKSARA</span> TOOLS HUB</h1><p>PILIH TOOL YANG INGIN DIGUNAKAN</p></div>
-  <nav class="nav">
-    <button class="active" data-page="home"><span class="ico">⌂</span> BERANDA</button>
-    <button data-page="tools"><span class="ico">⚒</span> TOOLS</button>
-    <button data-page="store"><span class="ico">🛒</span> AKSARA STORE</button>
-    <button data-page="free"><span class="ico">🎁</span> FREE ASSETS</button>
-    <button data-page="paid"><span class="ico">◆</span> PAID ASSETS</button>
-    <button data-page="support"><span class="ico">◉</span> SUPPORT</button>
-    <button data-page="settings"><span class="ico">⚙</span> SETTING</button>
-    <button data-page="admin"><span class="ico">▣</span> ADMIN PANEL</button>
-  </nav>
-  <div class="sidebar-note">“TOOLS TERBAIK<br>UNTUK SEMUA<br>KEBUTUHANMU”<br><br>— AKSARA COMMUNITY —</div>
-</aside>
-
-<main class="main">
-  <div class="topbar">
-    <button class="mobile-menu" onclick="toggleMenu()">☰</button>
-    <div class="page-title"><span>AKSARA</span> TOOLS HUB</div>
-    <button class="back" onclick="goBack()">✕ KEMBALI</button>
-  </div>
-  <div id="content"></div>
-  <footer>AKSARA TOOLS HUB • Prototype v1.0</footer>
-</main>
+<div id="intro">
+<video id="video" playsinline preload="auto"><source src="https://videotourl.com/videos/1788800862687-e0b821de-f2cc-4315-ae24-045e167324fe.mp4" type="video/mp4"></video>
+<div class="shade"></div><button id="start">▶ PLAY INTRO</button>
+<div id="title">AKSARA TOOLS HUB<span class="sub">COMMUNITY • TOOLS • ASSETS</span></div><div class="panel left"></div><div class="panel right"></div>
 </div>
-
+<div id="app" class="hidden"><aside class="side"><div class="brand">AKSARA <span>TOOLS HUB</span></div><nav class="nav">
+<button data-p="home">🏠 Beranda</button><button data-p="tools">🛠️ Tools</button><button data-p="store">🛍️ Aksara Store</button><button data-p="free">🆓 Free Assets</button><button data-p="paid">💎 Paid Assets</button><button data-p="support">💬 Support</button><button data-p="settings">⚙️ Setting</button><button data-p="admin">🔐 Admin Panel</button>
+</nav></aside><main class="main" id="content"></main></div>
 <script>
-const DISCORD_TICKET_URL = "https://discord.com/channels/ID_SERVER/ID_CHANNEL";
-let historyStack=[];
-
+const SUPABASE_URL="https://eiuzozldgldzfssufusq.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+const DISCORD_TICKET_URL="https://discord.com/channels/1536301578561257554/1541828022351433748";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 const pages={
-home:()=>`
-<div class="hero"><div class="eyebrow">AKSARA COMMUNITY</div><h2>TOOLS HUB</h2>
-<p>Satu tempat untuk mengakses tools, asset gratis, asset premium, dan layanan AKSARA. Produk akan muncul setelah kamu membuka kategorinya.</p></div>
-<div class="section"><div class="section-head"><div><h3>Menu Utama</h3><small>Pilih layanan yang ingin digunakan</small></div></div>
-<div class="grid">
-${card("🎧","BYPASS AUDIO TOOLS","Tool audio untuk kebutuhan Roblox.","tools")}
-${card("🛒","AKSARA STORE","Lihat produk dan layanan AKSARA.","store")}
-${card("🎁","FREE ASSETS","Asset gratis untuk komunitas.","free")}
-${card("◆","PAID ASSETS","Asset premium. Pembelian melalui tiket Discord.","paid")}
-</div></div>`,
-tools:()=>`
-<div class="section"><div class="section-head"><div><h3>TOOLS</h3><small>Tools yang tersedia di AKSARA</small></div></div>
-<div class="grid">${card("🎧","BYPASS AUDIO TOOLS","Kelola kebutuhan audio Roblox.","tool-detail")}</div></div>`,
-store:()=>`
-<div class="section"><div class="section-head"><div><h3>AKSARA STORE</h3><small>Produk akan kamu tambahkan secara manual</small></div></div>
-<div class="empty"><div class="eico">🛒</div><h4>Belum ada produk</h4><p>Halaman ini sudah disiapkan. Produk dapat ditambahkan pada tahap berikutnya.</p></div></div>`,
-free:()=>assetPage("🎁","FREE ASSETS","Asset gratis yang dapat langsung di-download."),
-paid:()=>assetPage("◆","PAID ASSETS","Asset premium. Tombol pembelian akan diarahkan ke tiket Discord."),
-support:()=>`
-<div class="section"><div class="section-head"><div><h3>SUPPORT</h3><small>Butuh bantuan?</small></div></div>
-<div class="empty"><div class="eico">🎧</div><h4>AKSARA SUPPORT</h4><p>Hubungi support melalui Discord untuk bantuan dan pertanyaan.</p>
-<button class="open" onclick="openDiscord()">BUKA DISCORD →</button></div></div>`,
-settings:()=>`
-<div class="section"><div class="section-head"><div><h3>SETTING</h3><small>Pengaturan website</small></div></div>
-<div class="empty"><div class="eico">⚙</div><h4>Pengaturan</h4><p>Pengaturan pengguna akan ditambahkan pada versi berikutnya.</p></div></div>`,
-admin:()=>`
-<div class="section">
-  <div class="section-head"><div><h3>▣ ADMIN PANEL</h3><small>Kelola produk secara manual dari browser</small></div></div>
-  <div class="admin-box">
-    <div class="form-grid">
-      <label>Nama Produk<input id="pName" placeholder="Contoh: Roblox Sky Asset"></label>
-      <label>Kategori<select id="pType"><option value="free">FREE ASSET</option><option value="paid">PAID ASSET</option></select></label>
-      <label>Harga<input id="pPrice" placeholder="Contoh: Rp 25.000"></label>
-      <label>Thumbnail URL<input id="pImage" placeholder="https://..."></label>
-      <label>Download URL / File Link<input id="pDownload" placeholder="https://..."></label>
-      <label>Link Tiket Discord<input id="pTicket" placeholder="https://discord.com/channels/..."></label>
-      <label class="full">Deskripsi<textarea id="pDesc" placeholder="Deskripsi produk..."></textarea></label>
-    </div>
-    <button class="open" onclick="addProduct()">+ TAMBAH PRODUK</button>
-  </div>
-</div>
-<div class="section">
-  <div class="section-head"><div><h3>DAFTAR PRODUK</h3><small>Data tersimpan di browser ini</small></div></div>
-  <div id="adminProducts"></div>
-</div>`,
-
-
-"tool-detail":()=>`
-<div class="section"><div class="section-head"><div><h3>🎧 BYPASS AUDIO TOOLS</h3><small>Tool detail</small></div></div>
-<div class="empty"><div class="eico">🎧</div><h4>Tool siap dikembangkan</h4><p>Tempat untuk UI tool audio AKSARA.</p></div></div>`
+home:`<section class="hero"><h1>AKSARA TOOLS HUB</h1><p class="muted">Tools, store, dan asset komunitas dalam satu tempat.</p></section><h2>Kategori</h2><div class="grid">
+<div class="card"><div class="icon">🎧</div><h3>Audio Bypass Tools</h3><p class="muted">Koleksi tools audio komunitas.</p><button class="btn" onclick="go('tools')">Buka</button></div>
+<div class="card"><div class="icon">🛍️</div><h3>Aksara Store</h3><p class="muted">Produk dan kebutuhan komunitas.</p><button class="btn" onclick="go('store')">Buka</button></div>
+<div class="card"><div class="icon">🆓</div><h3>Free Assets</h3><p class="muted">Asset gratis dengan download langsung.</p><button class="btn" onclick="go('free')">Buka</button></div>
+<div class="card"><div class="icon">💎</div><h3>Paid Assets</h3><p class="muted">Asset premium dengan sistem tiket.</p><button class="btn" onclick="go('paid')">Buka</button></div></div>`,
+tools:`<section class="hero"><h1>Tools</h1><p class="muted">Tools AKSARA.</p></section><div id="tools" class="grid"></div>`,
+store:`<section class="hero"><h1>Aksara Store</h1><p class="muted">Produk komunitas.</p></section><div id="store" class="grid"></div>`,
+free:`<section class="hero"><h1>Free Assets</h1><p class="muted">Asset gratis.</p></section><div id="free" class="grid"></div>`,
+paid:`<section class="hero"><h1>Paid Assets</h1><p class="muted">Asset premium.</p></section><div id="paid" class="grid"></div>`,
+support:`<section class="hero"><h1>Support</h1><p class="muted">Hubungi Discord untuk bantuan.</p><button class="btn" onclick="window.open(DISCORD_TICKET_URL,'_blank')">💬 Buka Discord Ticket</button></section>`,
+settings:`<section class="hero"><h1>Setting</h1><p class="muted">Pengaturan website.</p><button class="btn alt" onclick="location.reload()">▶ Putar Intro Lagi</button></section>`,
+admin:`<section class="hero"><h1>Admin Panel</h1><p class="muted">Tambah produk ke Supabase.</p></section><form id="form">
+<label>Nama Produk<input name="name" required></label><label>Kategori<select name="category"><option value="free">Free</option><option value="paid">Paid</option><option value="tools">Tools</option><option value="store">Aksara Store</option></select></label>
+<label>Harga<input name="price" type="number" min="0" value="0"></label><label>Thumbnail URL<input name="thumbnail_url"></label><label>Download URL / File Link<input name="download_url"></label><label>Link Tiket Discord<input name="ticket_url" value="${DISCORD_TICKET_URL}"></label><label>Deskripsi<textarea name="description"></textarea></label><button class="btn" type="submit">➕ Tambah Produk</button></form><p id="msg" class="muted"></p><div id="adminProducts" class="grid"></div>`
 };
-
-function card(icon,title,desc,page,extra=""){
-return `<div class="card"><div><div class="bigico">${icon}</div><h4>${title}</h4><p>${desc}</p></div><button class="open ${extra}" onclick="navigate('${page}')">BUKA →</button></div>`;
-}
-function assetPage(icon,title,desc){
-return `<div class="section"><div class="section-head"><div><h3>${icon} ${title}</h3><small>${desc}</small></div><input class="search" placeholder="Cari asset..." oninput="filterProducts(this.value)"></div>
-<div id="products" class="product-grid"></div></div>`;
-}
-function render(page="home",push=true){
- if(push && page!==currentPage) historyStack.push(currentPage);
- currentPage=page; document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
- document.getElementById("content").innerHTML=pages[page]?pages[page]():pages.home();
- if(page==="free"||page==="paid") renderProducts(page);
- if(page==="admin") renderAdminProducts();
- document.getElementById("sidebar").classList.remove("opened");
-}
-let currentPage="home";
-function navigate(p){render(p,true)}
-function goBack(){if(historyStack.length)render(historyStack.pop(),false);else render("home",false)}
-function toggleMenu(){document.getElementById("sidebar").classList.toggle("opened")}
-function openDiscord(){window.open(DISCORD_TICKET_URL,"_blank")}
-function getProducts(){return JSON.parse(localStorage.getItem("aksaraProducts")||"[]")}
-function saveProducts(a){localStorage.setItem("aksaraProducts",JSON.stringify(a))}
-function renderProducts(type,q=""){
- const el=document.getElementById("products"); if(!el)return;
- const products=getProducts().filter(p=>p.type===type && (p.name+" "+p.desc).toLowerCase().includes(q.toLowerCase()));
- if(!products.length){el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="eico">${type==="free"?"🎁":"◆"}</div><h4>Belum ada ${type==="free"?"free":"paid"} asset</h4><p>Tambahkan produk melalui ADMIN PANEL.</p></div>`;return}
- el.innerHTML=products.map((p,i)=>`
- <div class="product">
-   <div class="product-img">${p.image?`<img src="${esc(p.image)}" alt="" onerror="this.style.display='none'">`:"THUMBNAIL"}</div>
-   <div class="product-body"><h4>${esc(p.name)}</h4><p>${esc(p.desc)}${p.type==="paid"&&p.price?`<br><b>${esc(p.price)}</b>`:""}</p>
-   <div class="actions">
-    ${p.type==="free"?`<button class="open" onclick="window.open('${escAttr(p.download)}','_blank')">DOWNLOAD</button>`:`<button class="open gold" onclick="window.open('${escAttr(p.ticket||DISCORD_TICKET_URL)}','_blank')">🎟️ TIKET BAYAR</button>`}
-    <button class="open" onclick="alert('Komentar akan tersedia pada versi database berikutnya.')">💬 KOMENTAR</button>
-   </div></div>
- </div>`).join("");
-}
-function filterProducts(q){renderProducts(currentPage,q)}
-function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function escAttr(s){return String(s||"").replace(/'/g,"\\'")}
-function addProduct(){
- const p={name:document.getElementById("pName").value.trim(),type:document.getElementById("pType").value,
- price:document.getElementById("pPrice").value.trim(),image:document.getElementById("pImage").value.trim(),
- download:document.getElementById("pDownload").value.trim(),ticket:document.getElementById("pTicket").value.trim(),
- desc:document.getElementById("pDesc").value.trim()};
- if(!p.name){alert("Nama produk wajib diisi.");return}
- const a=getProducts();a.push(p);saveProducts(a);
- ["pName","pPrice","pImage","pDownload","pTicket","pDesc"].forEach(id=>document.getElementById(id).value="");
- renderAdminProducts();alert("Produk berhasil ditambahkan.");
-}
-function renderAdminProducts(){
- const el=document.getElementById("adminProducts");if(!el)return;
- const a=getProducts();
- if(!a.length){el.innerHTML='<div class="empty"><div class="eico">📦</div><h4>Belum ada produk</h4><p>Gunakan formulir di atas untuk menambahkan produk.</p></div>';return}
- el.innerHTML=a.map((p,i)=>`<div class="comment" style="display:flex;justify-content:space-between;align-items:center;gap:10px">
- <div><b>${esc(p.name)}</b><p>${p.type.toUpperCase()} ${p.price?"• "+esc(p.price):""}</p></div>
- <button class="open" style="max-width:90px" onclick="deleteProduct(${i})">HAPUS</button></div>`).join("");
-}
-function deleteProduct(i){if(confirm("Hapus produk ini?")){const a=getProducts();a.splice(i,1);saveProducts(a);renderAdminProducts()}}
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>navigate(b.dataset.page));
-render();
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function products(){const r=await sb.from('products').select('*').order('created_at',{ascending:false});return r.error?[]:r.data||[]}
+function card(p){let a=p.category==='paid'?`<button class="btn" onclick="window.open('${esc(p.ticket_url||DISCORD_TICKET_URL)}','_blank')">🎟️ TIKET BAYAR</button>`:`<button class="btn" onclick="window.open('${esc(p.download_url||'#')}','_blank')">⬇ DOWNLOAD</button>`;return `<article class="card"><div class="thumb">${p.thumbnail_url?`<img src="${esc(p.thumbnail_url)}">`:'📦'}</div><h3>${esc(p.name)}</h3><p class="muted">${esc(p.description||'')}</p>${p.price?`<div class="price">Rp ${Number(p.price).toLocaleString('id-ID')}</div>`:''}<div class="actions">${a}<button class="btn alt" onclick="comments(${p.id})">💬 Komentar</button></div><div id="c${p.id}" class="commentBox"></div></article>`}
+async function list(id,cat){let el=document.getElementById(id);if(!el)return;el.innerHTML='<div class="empty">Memuat...</div>';let ps=await products();ps=ps.filter(p=>p.category===cat);el.innerHTML=ps.length?ps.map(card).join(''):'<div class="empty">Belum ada produk.</div>'}
+async function comments(id){let b=document.getElementById('c'+id);let r=await sb.from('comments').select('*').eq('product_id',id).order('created_at');let d=r.data||[];b.innerHTML=`<form onsubmit="addComment(event,${id})"><label>Nama<input name="name" required maxlength="40"></label><label>Komentar<textarea name="comment" required maxlength="500"></textarea></label><button class="btn">Kirim Komentar</button></form>${d.map(c=>`<div class="comment"><b>${esc(c.name)}</b><div>${esc(c.comment)}</div></div>`).join('')||'<div class="small">Belum ada komentar.</div>'}`}
+async function addComment(e,id){e.preventDefault();let f=e.target;let r=await sb.from('comments').insert({product_id:id,name:f.name.value.trim(),comment:f.comment.value.trim()});if(r.error)return alert(r.error.message);comments(id)}
+async function adminList(){let el=document.getElementById('adminProducts');if(!el)return;let ps=await products();el.innerHTML=ps.length?ps.map(p=>card(p).replace('</article>',`<div class="actions"><button class="btn danger" onclick="del(${p.id})">🗑 Hapus</button></div></article>`)).join(''):'<div class="empty">Belum ada produk.</div>'}
+async function del(id){if(!confirm('Hapus produk ini?'))return;let r=await sb.from('products').delete().eq('id',id);if(r.error)alert(r.error.message);else adminList()}
+function go(p){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.p===p));document.getElementById('content').innerHTML=pages[p]||pages.home;if(['tools','store','free','paid'].includes(p))list(p,p);if(p==='admin'){document.getElementById('form').onsubmit=async e=>{e.preventDefault();let f=e.target;let r=await sb.from('products').insert({name:f.name.value,category:f.category.value,price:f.price.value?Number(f.price.value):null,thumbnail_url:f.thumbnail_url.value||null,download_url:f.download_url.value||null,ticket_url:f.ticket_url.value||null,description:f.description.value||null});document.getElementById('msg').textContent=r.error?'Gagal: '+r.error.message:'Produk berhasil ditambahkan!';if(!r.error){f.reset();f.ticket_url.value=DISCORD_TICKET_URL;adminList()}};adminList()}}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+const intro=document.getElementById('intro'),video=document.getElementById('video'),start=document.getElementById('start'),title=document.getElementById('title');
+function finish(){start.classList.add('hidden');title.style.opacity=1;title.style.transform='scale(1)';setTimeout(()=>{intro.classList.add('open');setTimeout(()=>{intro.remove();document.getElementById('app').classList.remove('hidden');go('home')},1100)},900)}
+video.onended=finish;start.onclick=async()=>{start.classList.add('hidden');try{await video.play()}catch(e){}};video.play().then(()=>start.classList.add('hidden')).catch(()=>{});
 </script>
-</body>
-</html>
+</body></html>
